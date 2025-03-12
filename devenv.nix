@@ -6,32 +6,42 @@
 }:
 
 {
-  packages = with pkgs; [
-    # required by bevy
-    alsa-lib
-    libxkbcommon
-    udev
-    wayland
-
-    # pkg-config
-    # libGL
-    # lld
-    # clang
-    # linuxPackages.nvidia_x11
-  ];
+  packages =
+    with pkgs;
+    [
+      # necessary?
+      # pkg-config
+      # libGL
+      # lld
+      # clang
+      # linuxPackages.nvidia_x11
+    ]
+    ++ lib.optionals pkgs.stdenv.isLinux [
+      # required by bevy on linux
+      alsa-lib
+      libxkbcommon
+      udev
+      wayland
+    ]
+    ++ lib.optionals pkgs.stdenv.isDarwin [
+      llvmPackages.libcxxStdenv
+      llvmPackages.libcxxClang
+    ];
   languages.rust = {
     enable = true;
-    mold.enable = true;
+    mold.enable = pkgs.stdenv.isLinux;
   };
-  enterShell = ''
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${
-      with pkgs;
-      lib.makeLibraryPath [
-        vulkan-loader
-      ]
-    }"
-    ${lib.getExe config.scripts.download-assets.scriptPackage}
-  '';
+  stdenv = pkgs.stdenvNoCC;
+  enterShell =
+    lib.getExe config.scripts.download-assets.scriptPackage
+    + lib.optionalString pkgs.stdenv.isLinux ''
+      export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${
+        with pkgs;
+        lib.makeLibraryPath [
+          vulkan-loader
+        ]
+      }"
+    '';
 
   scripts.download-assets = {
     exec = # nu
