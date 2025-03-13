@@ -2,12 +2,15 @@ use bevy::{
     prelude::*,
     window::{PrimaryWindow, WindowResized},
 };
+use rand::random;
 
 pub const PLAYER_SPEED: f32 = 500.0;
 // TODO: either query the sprite size or hard set the size to be this.
 // There is no contract holding this to be always true.
 pub const PLAYER_SIZE: f32 = 64.0;
 pub const NUMBER_OF_ENEMIES: usize = 4;
+pub const ENEMY_SPEED: f32 = 200.0;
+pub const ENEMY_SIZE: f32 = 64.0;
 
 fn main() {
     App::new()
@@ -18,14 +21,20 @@ fn main() {
         .add_system(update_camera_on_resize)
         .add_system(player_movement)
         .add_system(confine_player_movement)
+        .add_system(enemy_movement)
+        .add_system(update_enemy_direction)
+        .add_system(confine_enemy_movement)
         .run();
 }
 
 #[derive(Component)]
 pub struct Player {}
 #[derive(Component)]
-pub struct Enemy {}
+pub struct Enemy {
+    pub direction: Vec2,
+}
 
+/// Spawn single player Component
 pub fn spawn_player(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -42,6 +51,7 @@ pub fn spawn_player(
     ));
 }
 
+/// Spawn `NUMBER_OF_ENEMIES` Enemy Components
 pub fn spawn_enemies(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -49,8 +59,8 @@ pub fn spawn_enemies(
 ) {
     let window = window_query.get_single().unwrap();
     for _ in 0..NUMBER_OF_ENEMIES {
-        let random_x = rand::random::<f32>() * window.width();
-        let random_y = rand::random::<f32>() * window.height();
+        let random_x = random::<f32>() * (window.width() - PLAYER_SIZE) + PLAYER_SIZE / 2.0;
+        let random_y = random::<f32>() * (window.height() - PLAYER_SIZE) + PLAYER_SIZE / 2.0;
         commands.spawn((
             SpriteBundle {
                 transform: Transform::from_xyz(random_x, random_y, 0.0),
@@ -58,7 +68,10 @@ pub fn spawn_enemies(
                 ..default()
             },
             // I suppose this can be thought of as a tag
-            Enemy {},
+            Enemy {
+                direction: Vec2::new(random::<f32>() * 2.0 - 1.0, random::<f32>() * 2.0 - 1.0)
+                    .normalize(),
+            },
         ));
     }
 }
@@ -87,6 +100,7 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
     });
 }
 
+/// Enable player to move with WASD/arrow keys
 pub fn player_movement(
     keyboard_input: Res<Input<KeyCode>>,
     // The Transform here comes from the SpriteBundle above. Because we spawned
@@ -122,6 +136,7 @@ pub fn player_movement(
     }
 }
 
+/// Confine the player to the window bounds
 pub fn confine_player_movement(
     mut player_query: Query<&mut Transform, With<Player>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -133,6 +148,64 @@ pub fn confine_player_movement(
         let min_y = 0.0 + half_player_size;
         let max_x = window.width() - half_player_size;
         let max_y = window.height() - half_player_size;
+
+        let mut translation = transform.translation;
+        if translation.x < min_x {
+            translation.x = min_x;
+        } else if translation.x > max_x {
+            translation.x = max_x;
+        }
+        if translation.y < min_y {
+            translation.y = min_y;
+        } else if translation.y > max_y {
+            translation.y = max_y;
+        }
+        transform.translation = translation;
+    }
+}
+
+/// Push enemies in the direction they are facing.
+pub fn enemy_movement(mut enemy_query: Query<(&mut Transform, &Enemy)>, time: Res<Time>) {
+    for (mut transform, enemy) in enemy_query.iter_mut() {
+        let direction = Vec3::new(enemy.direction.x, enemy.direction.y, 0.0);
+        transform.translation += direction * ENEMY_SPEED * time.delta_seconds();
+    }
+}
+
+/// Enable enemies to hit walls and reverse direction
+pub fn update_enemy_direction(
+    mut enemy_query: Query<(&Transform, &mut Enemy)>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+) {
+    let window = window_query.get_single().unwrap();
+    let half_enemy_size = ENEMY_SIZE / 2.0;
+    let min_x = 0.0 + half_enemy_size;
+    let min_y = 0.0 + half_enemy_size;
+    let max_x = window.width() - half_enemy_size;
+    let max_y = window.height() - half_enemy_size;
+    for (transform, mut enemy) in enemy_query.iter_mut() {
+        let translation = transform.translation;
+        if translation.x < min_x || translation.x > max_x {
+            enemy.direction.x *= -1.0;
+        }
+        if translation.y < min_y || translation.y > max_y {
+            enemy.direction.y *= -1.0;
+        }
+    }
+}
+
+/// Confine the enemies to the window bounds
+pub fn confine_enemy_movement(
+    mut enemies_query: Query<&mut Transform, With<Enemy>>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+) {
+    let window = window_query.get_single().unwrap();
+    for mut transform in enemies_query.iter_mut() {
+        let half_enemy_size = ENEMY_SIZE / 2.0;
+        let min_x = 0.0 + half_enemy_size;
+        let min_y = 0.0 + half_enemy_size;
+        let max_x = window.width() - half_enemy_size;
+        let max_y = window.height() - half_enemy_size;
 
         let mut translation = transform.translation;
         if translation.x < min_x {
