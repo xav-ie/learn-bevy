@@ -73,6 +73,11 @@
               [
                 "Audio/laserLarge_000.ogg"
                 "Audio/explosionCrunch_000.ogg"
+                "Audio/impactMetal_000.ogg"
+                "Audio/impactMetal_001.ogg"
+                "Audio/impactMetal_002.ogg"
+                "Audio/impactMetal_003.ogg"
+                "Audio/impactMetal_004.ogg"
               ]
             ]
             # https://kenney.nl/assets/interface-sounds
@@ -80,8 +85,8 @@
               "https://kenney.nl/media/pages/assets/interface-sounds/f3134a7c4c-1677589452/kenney_interface-sounds.zip"
               "interface.zip"
               [
-                "Audio/pluck_001.ogg"
-                "Audio/pluck_002.ogg"
+                # "Audio/pluck_001.ogg"
+                # "Audio/pluck_002.ogg"
               ]
             ]
           ]

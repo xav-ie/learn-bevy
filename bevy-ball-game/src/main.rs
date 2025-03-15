@@ -2,7 +2,8 @@ use bevy::{
     prelude::*,
     window::{PrimaryWindow, WindowResized},
 };
-use rand::random;
+use rand::thread_rng;
+use rand::{random, seq::SliceRandom};
 
 pub const PLAYER_SPEED: f32 = 500.0;
 // TODO: either query the sprite size or hard set the size to be this.
@@ -198,12 +199,18 @@ pub fn update_enemy_direction(
         }
 
         if direction_changed {
-            let sound_effect_1 = asset_server.load("audio/pluck_001.ogg");
-            let sound_effect_2 = asset_server.load("audio/pluck_002.ogg");
-            let sound_effect = random::<bool>()
-                .then_some(sound_effect_1)
-                .unwrap_or(sound_effect_2);
-            audio.play(sound_effect);
+            let sound_effects = vec![
+                "audio/impactMetal_000.ogg",
+                "audio/impactMetal_001.ogg",
+                "audio/impactMetal_002.ogg",
+                "audio/impactMetal_003.ogg",
+                "audio/impactMetal_004.ogg",
+            ];
+            let mut rng = thread_rng();
+            let sound_effect = sound_effects.choose(&mut rng).unwrap();
+            let effect = asset_server.load(*sound_effect);
+
+            audio.play(effect);
         }
     }
 }
