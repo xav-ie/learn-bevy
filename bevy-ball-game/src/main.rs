@@ -12,6 +12,8 @@ pub const PLAYER_SIZE: f32 = 64.0;
 pub const NUMBER_OF_ENEMIES: usize = 4;
 pub const ENEMY_SPEED: f32 = 200.0;
 pub const ENEMY_SIZE: f32 = 64.0;
+pub const NUMBER_OF_STARS: usize = 10;
+pub const STAR_SIZE: f32 = 30.0;
 
 fn main() {
     App::new()
@@ -19,6 +21,7 @@ fn main() {
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_player)
         .add_startup_system(spawn_enemies)
+        .add_startup_system(spawn_stars)
         .add_system(update_camera_on_resize)
         .add_system(player_movement)
         .add_system(confine_player_movement)
@@ -26,6 +29,7 @@ fn main() {
         .add_system(update_enemy_direction)
         .add_system(confine_enemy_movement)
         .add_system(enemy_hit_player)
+        .add_system(player_hit_star)
         .run();
 }
 
@@ -35,6 +39,8 @@ pub struct Player {}
 pub struct Enemy {
     pub direction: Vec2,
 }
+#[derive(Component)]
+pub struct Star {}
 
 /// Spawn single player Component
 pub fn spawn_player(
@@ -73,6 +79,31 @@ pub fn spawn_enemies(
             Enemy {
                 direction: Vec2::new(random::<f32>() * 2.0 - 1.0, random::<f32>() * 2.0 - 1.0)
                     .normalize(),
+            },
+        ));
+    }
+}
+
+/// Spawn `NUMBER_OF_STARS` Star Components
+pub fn spawn_stars(
+    mut commands: Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+) {
+    let window = window_query.get_single().unwrap();
+    for _ in 0..NUMBER_OF_STARS {
+        let random_x = random::<f32>() * (window.width() - STAR_SIZE) + STAR_SIZE / 2.0;
+        let random_y = random::<f32>() * (window.height() - STAR_SIZE) + STAR_SIZE / 2.0;
+        commands.spawn((
+            SpriteBundle {
+                transform: Transform::from_xyz(random_x, random_y, 0.0),
+                texture: asset_server.load("sprites/star.png"),
+                ..default()
+            },
+            // I suppose this can be thought of as a tag
+            Star {
+                // direction: Vec2::new(random::<f32>() * 2.0 - 1.0, random::<f32>() * 2.0 - 1.0)
+                //     .normalize(),
             },
         ));
     }
@@ -263,6 +294,29 @@ pub fn enemy_hit_player(
                 let sound_effect = asset_server.load("audio/explosionCrunch_000.ogg");
                 audio.play(sound_effect);
                 commands.entity(player_entity).despawn();
+            }
+        }
+    }
+}
+
+pub fn player_hit_star(
+    mut commands: Commands,
+    mut player_query: Query<&Transform, With<Player>>,
+    star_query: Query<(Entity, &Transform), With<Star>>,
+    asset_server: Res<AssetServer>,
+    audio: Res<Audio>,
+) {
+    if let Ok(player_transform) = player_query.get_single_mut() {
+        for (star_entity, star_transform) in star_query.iter() {
+            let distance = star_transform
+                .translation
+                .distance(player_transform.translation);
+            let player_radius = PLAYER_SIZE / 2.0;
+            let star_radius = STAR_SIZE / 2.0;
+            if distance < player_radius + star_radius {
+                let sound_effect = asset_server.load("../assets/audio/pluck_001.ogg");
+                audio.play(sound_effect);
+                commands.entity(star_entity).despawn();
             }
         }
     }
