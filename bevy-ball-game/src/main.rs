@@ -14,11 +14,13 @@ pub const ENEMY_SPEED: f32 = 200.0;
 pub const ENEMY_SIZE: f32 = 64.0;
 pub const NUMBER_OF_STARS: usize = 10;
 pub const STAR_SIZE: f32 = 30.0;
+pub const SPAWN_STAR_TIME: f32 = 1.0;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .init_resource::<Score>()
+        .init_resource::<SpawnStarTimer>()
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_player)
         .add_startup_system(spawn_enemies)
@@ -32,6 +34,7 @@ fn main() {
         .add_system(enemy_hit_player)
         .add_system(player_hit_star)
         .add_system(update_score)
+        .add_system(tick_spawn_star_timer)
         .run();
 }
 
@@ -55,6 +58,18 @@ impl Default for Score {
     }
 }
 
+#[derive(Resource)]
+pub struct SpawnStarTimer {
+    pub timer: Timer,
+}
+
+impl Default for SpawnStarTimer {
+    fn default() -> SpawnStarTimer {
+        SpawnStarTimer {
+            timer: Timer::from_seconds(SPAWN_STAR_TIME, TimerMode::Repeating),
+        }
+    }
+}
 /// Spawn single player Component
 pub fn spawn_player(
     mut commands: Commands,
@@ -341,4 +356,8 @@ pub fn update_score(score: Res<Score>) {
     if score.is_changed() {
         println!("Score: {}", score.value);
     }
+}
+
+pub fn tick_spawn_star_timer(mut spawn_star_timer: ResMut<SpawnStarTimer>, time: Res<Time>) {
+    spawn_star_timer.timer.tick(time.delta());
 }
