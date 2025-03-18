@@ -1,4 +1,5 @@
 use bevy::{
+    app::AppExit,
     prelude::*,
     window::{PrimaryWindow, WindowResized},
 };
@@ -40,6 +41,7 @@ fn main() {
         .add_system(tick_spawn_enemy_timer)
         .add_system(spawn_stars_over_time)
         .add_system(spawn_enemies_over_time)
+        .add_system(exit_game)
         .run();
 }
 
@@ -426,5 +428,14 @@ pub fn spawn_enemies_over_time(
                     .normalize(),
             },
         ));
+    }
+}
+
+pub fn exit_game(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut app_exit_event_writer: EventWriter<AppExit>,
+) {
+    if keyboard_input.just_pressed(KeyCode::Escape) {
+        app_exit_event_writer.send(AppExit);
     }
 }
