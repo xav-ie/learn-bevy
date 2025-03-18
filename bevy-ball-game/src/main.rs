@@ -24,6 +24,7 @@ fn main() {
         .init_resource::<Score>()
         .init_resource::<SpawnStarTimer>()
         .init_resource::<SpawnEnemyTimer>()
+        .add_event::<GameOver>()
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_player)
         .add_startup_system(spawn_enemies)
@@ -42,6 +43,7 @@ fn main() {
         .add_system(spawn_stars_over_time)
         .add_system(spawn_enemies_over_time)
         .add_system(exit_game)
+        .add_system(handle_game_over)
         .run();
 }
 
@@ -89,6 +91,10 @@ impl Default for SpawnEnemyTimer {
             timer: Timer::from_seconds(SPAWN_ENEMY_TIME, TimerMode::Repeating),
         }
     }
+}
+
+pub struct GameOver {
+    pub score: u32,
 }
 
 /// Spawn single player Component
@@ -326,10 +332,12 @@ pub fn confine_enemy_movement(
 
 pub fn enemy_hit_player(
     mut commands: Commands,
+    mut game_over_event_writer: EventWriter<GameOver>,
     mut player_query: Query<(Entity, &Transform), With<Player>>,
     enemy_query: Query<&Transform, With<Enemy>>,
     asset_server: Res<AssetServer>,
     audio: Res<Audio>,
+    score: Res<Score>,
 ) {
     if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
         for enemy_transform in enemy_query.iter() {
@@ -343,6 +351,7 @@ pub fn enemy_hit_player(
                 let sound_effect = asset_server.load("audio/explosionCrunch_000.ogg");
                 audio.play(sound_effect);
                 commands.entity(player_entity).despawn();
+                game_over_event_writer.send(GameOver { score: score.value });
             }
         }
     }
@@ -436,6 +445,16 @@ pub fn exit_game(
     mut app_exit_event_writer: EventWriter<AppExit>,
 ) {
     if keyboard_input.just_pressed(KeyCode::Escape) {
+        app_exit_event_writer.send(AppExit);
+    }
+}
+
+pub fn handle_game_over(
+    mut game_over_event_reader: EventReader<GameOver>,
+    mut app_exit_event_writer: EventWriter<AppExit>,
+) {
+    for event in game_over_event_reader.iter() {
+        println!("Your final score is {}.", event.score);
         app_exit_event_writer.send(AppExit);
     }
 }
