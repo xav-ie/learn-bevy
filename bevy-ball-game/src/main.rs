@@ -15,12 +15,14 @@ pub const ENEMY_SIZE: f32 = 64.0;
 pub const NUMBER_OF_STARS: usize = 10;
 pub const STAR_SIZE: f32 = 30.0;
 pub const SPAWN_STAR_TIME: f32 = 1.0;
+pub const SPAWN_ENEMY_TIME: f32 = 5.0;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .init_resource::<Score>()
         .init_resource::<SpawnStarTimer>()
+        .init_resource::<SpawnEnemyTimer>()
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_player)
         .add_startup_system(spawn_enemies)
@@ -35,7 +37,9 @@ fn main() {
         .add_system(player_hit_star)
         .add_system(update_score)
         .add_system(tick_spawn_star_timer)
+        .add_system(tick_spawn_enemy_timer)
         .add_system(spawn_stars_over_time)
+        .add_system(spawn_enemies_over_time)
         .run();
 }
 
@@ -71,6 +75,20 @@ impl Default for SpawnStarTimer {
         }
     }
 }
+
+#[derive(Resource)]
+pub struct SpawnEnemyTimer {
+    pub timer: Timer,
+}
+
+impl Default for SpawnEnemyTimer {
+    fn default() -> SpawnEnemyTimer {
+        SpawnEnemyTimer {
+            timer: Timer::from_seconds(SPAWN_ENEMY_TIME, TimerMode::Repeating),
+        }
+    }
+}
+
 /// Spawn single player Component
 pub fn spawn_player(
     mut commands: Commands,
@@ -362,6 +380,9 @@ pub fn update_score(score: Res<Score>) {
 pub fn tick_spawn_star_timer(mut spawn_star_timer: ResMut<SpawnStarTimer>, time: Res<Time>) {
     spawn_star_timer.timer.tick(time.delta());
 }
+pub fn tick_spawn_enemy_timer(mut spawn_enemy_timer: ResMut<SpawnEnemyTimer>, time: Res<Time>) {
+    spawn_enemy_timer.timer.tick(time.delta());
+}
 
 pub fn spawn_stars_over_time(
     mut commands: Commands,
@@ -380,6 +401,30 @@ pub fn spawn_stars_over_time(
                 ..default()
             },
             Star {},
+        ));
+    }
+}
+
+pub fn spawn_enemies_over_time(
+    mut commands: Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+    spawn_enemy_timer: Res<SpawnEnemyTimer>,
+) {
+    if spawn_enemy_timer.timer.finished() {
+        let window = window_query.get_single().unwrap();
+        let random_x = random::<f32>() * (window.width() - ENEMY_SIZE) + ENEMY_SIZE / 2.0;
+        let random_y = random::<f32>() * (window.height() - ENEMY_SIZE) + ENEMY_SIZE / 2.0;
+        commands.spawn((
+            SpriteBundle {
+                transform: Transform::from_xyz(random_x, random_y, 0.0),
+                texture: asset_server.load("sprites/ball_red_large.png"),
+                ..default()
+            },
+            Enemy {
+                direction: Vec2::new(random::<f32>() * 2.0 - 1.0, random::<f32>() * 2.0 - 1.0)
+                    .normalize(),
+            },
         ));
     }
 }
