@@ -32,16 +32,19 @@
     mold.enable = pkgs.stdenv.isLinux;
   };
   stdenv = pkgs.stdenvNoCC;
-  enterShell =
-    lib.getExe config.scripts.download-assets.scriptPackage
-    + lib.optionalString pkgs.stdenv.isLinux ''
-      export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${
-        with pkgs;
-        lib.makeLibraryPath [
-          vulkan-loader
-        ]
-      }"
-    '';
+  enterShell = builtins.concatStringsSep "\n" [
+    (lib.getExe config.scripts.download-assets.scriptPackage)
+    (lib.optionalString pkgs.stdenv.isLinux # sh
+      ''
+        export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${
+          with pkgs;
+          lib.makeLibraryPath [
+            vulkan-loader
+          ]
+        }"
+      ''
+    )
+  ];
 
   scripts.download-assets = {
     exec = # nu
