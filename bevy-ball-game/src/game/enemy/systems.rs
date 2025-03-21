@@ -1,4 +1,4 @@
-use crate::player::PLAYER_SIZE;
+use crate::game::player::PLAYER_SIZE;
 
 use super::components::*;
 use super::resources::*;

@@ -1,9 +1,9 @@
 use super::{components::*, PLAYER_SIZE, PLAYER_SPEED};
 use crate::{
-    enemy::{components::Enemy, ENEMY_SIZE},
     events::*,
-    score::resources::Score,
-    star::{components::Star, STAR_SIZE},
+    game::enemy::{components::Enemy, ENEMY_SIZE},
+    game::score::resources::Score,
+    game::star::{components::Star, STAR_SIZE},
 };
 use bevy::{prelude::*, window::PrimaryWindow};
 
