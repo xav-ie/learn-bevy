@@ -12,6 +12,7 @@ use bevy::prelude::*;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .add_state::<AppState>()
         .add_plugin(GamePlugin)
         .add_plugin(MainMenuPlugin)
         .add_startup_system(spawn_camera)
@@ -19,4 +20,12 @@ fn main() {
         .add_system(exit_game)
         .add_system(handle_game_over)
         .run();
+}
+
+#[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
+pub enum AppState {
+    Game,
+    GameOver,
+    #[default]
+    MainMenu,
 }
