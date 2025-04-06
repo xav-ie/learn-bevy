@@ -23,6 +23,11 @@ pub fn spawn_player(
         Player {},
     ));
 }
+pub fn despawn_player(mut commands: Commands, player_query: Query<Entity, With<Player>>) {
+    if let Ok(player) = player_query.get_single() {
+        commands.entity(player).despawn();
+    }
+}
 
 /// Enable player to move with WASD/arrow keys
 pub fn player_movement(

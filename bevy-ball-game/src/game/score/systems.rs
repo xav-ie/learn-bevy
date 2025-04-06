@@ -2,6 +2,15 @@ use super::resources::*;
 use crate::events::*;
 use bevy::prelude::*;
 
+pub fn insert_score(mut commands: Commands) {
+    commands.init_resource::<Score>();
+    // commands.init_resource(Score::default());
+}
+
+pub fn remove_score(mut commands: Commands) {
+    commands.remove_resource::<Score>();
+}
+
 pub fn update_score(score: Res<Score>) {
     if score.is_changed() {
         println!("Score: {}", score.value);
