@@ -56,7 +56,8 @@
           let outBase = "bevy-ball-game/assets"
           let audioFolder = $outBase | path join "audio"
           let spritesFolder = $outBase | path join "sprites"
-          mkdir $audioFolder $spritesFolder
+          let fontFolder = $outBase | path join "fonts"
+          mkdir $audioFolder $spritesFolder $fontFolder
 
           let archives = [
              # https://kenney.nl/assets/rolling-ball-assets
@@ -129,6 +130,26 @@
               },
             _ => { error make {msg: "Fix archive format."} },
           }}
+
+
+          # Fetch fonts
+          let font_assets = [
+            ["https://github.com/bevyengine/bevy/raw/refs/heads/main/assets/fonts/FiraMono-Medium.ttf" "FiraMono-Medium.ttf"]
+            ["https://github.com/bevyengine/bevy/raw/refs/heads/main/assets/fonts/FiraSans-Bold.ttf" "FiraSans-Bold.ttf"]
+          ]
+          $font_assets | par-each {|font_asset| match $font_asset {
+              [$font_url $font_name] => {
+                  let outPath = $"($fontFolder)/($font_name)"
+                  # 1. download
+                  if (not ($outPath | path exists)) {
+                    print $"Downloading ($font_name)..."
+                    http get $font_url | save -f $outPath
+                  }
+              },
+              _ => { error make {msg: "Fix archive format."} },
+            }
+          }
+
           return;
         }
       '';
