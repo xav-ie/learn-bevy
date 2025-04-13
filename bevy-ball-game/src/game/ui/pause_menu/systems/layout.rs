@@ -23,9 +23,9 @@ pub fn build_pause_menu(commands: &mut Commands, asset_server: &Res<AssetServer>
                     flex_direction: FlexDirection::Column,
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
-                    gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
-                    padding: UiRect::new(Val::Px(8.0), Val::Px(8.0), Val::Px(8.0), Val::Px(8.0)),
-                    position: UiRect::new(Val::Px(0.0), Val::Px(0.0), Val::Px(0.0), Val::Px(0.0)),
+                    gap: Size::all(Val::Px(8.0)),
+                    padding: UiRect::all(Val::Px(8.0)),
+                    position: UiRect::all(Val::Px(0.0)),
                     position_type: PositionType::Absolute,
                     size: Size {
                         width: Val::Percent(100.0),
@@ -53,12 +53,7 @@ pub fn build_pause_menu(commands: &mut Commands, asset_server: &Res<AssetServer>
                     ..default()
                 },
                 style: Style {
-                    padding: UiRect::new(
-                        Val::Px(80.0),
-                        Val::Px(80.0),
-                        Val::Px(80.0),
-                        Val::Px(80.0),
-                    ),
+                    padding: UiRect::all(Val::Px(80.0)),
                     ..default()
                 },
                 ..default()

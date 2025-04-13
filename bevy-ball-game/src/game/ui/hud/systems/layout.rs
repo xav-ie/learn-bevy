@@ -20,8 +20,8 @@ pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> En
                     flex_direction: FlexDirection::Row,
                     justify_content: JustifyContent::SpaceBetween,
                     align_items: AlignItems::Center,
-                    gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
-                    padding: UiRect::new(Val::Px(8.0), Val::Px(8.0), Val::Px(8.0), Val::Px(8.0)),
+                    gap: Size::all(Val::Px(8.0)),
+                    padding: UiRect::all(Val::Px(8.0)),
                     size: Size {
                         width: Val::Percent(100.0),
                         height: Val::Px(120.0),
@@ -43,7 +43,7 @@ pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> En
                 .with_children(|parent| {
                     parent.spawn(ImageBundle {
                         style: Style {
-                            size: Size::new(Val::Px(32.0), Val::Px(32.0)),
+                            size: Size::all(Val::Px(32.0)),
                             ..default()
                         },
                         image: asset_server.load("sprites/star.png").into(),
@@ -76,7 +76,7 @@ pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> En
                 .with_children(|parent| {
                     parent.spawn(ImageBundle {
                         style: Style {
-                            size: Size::new(Val::Px(32.0), Val::Px(32.0)),
+                            size: Size::all(Val::Px(32.0)),
                             ..default()
                         },
                         image: asset_server.load("sprites/ball_red_large.png").into(),

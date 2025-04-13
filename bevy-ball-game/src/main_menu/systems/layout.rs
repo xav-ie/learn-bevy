@@ -20,7 +20,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                     flex_direction: FlexDirection::Column,
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
-                    gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
+                    gap: Size::all(Val::Px(8.0)),
                     size: Size {
                         width: Val::Percent(100.0),
                         height: Val::Percent(100.0),
@@ -40,7 +40,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
                         size: Size::new(Val::Px(300.0), Val::Px(120.0)),
-                        gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
+                        gap: Size::all(Val::Px(8.0)),
                         ..default()
                     },
                     ..default()
@@ -49,7 +49,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                     // image
                     parent.spawn(ImageBundle {
                         style: Style {
-                            size: Size::new(Val::Px(64.0), Val::Px(64.0)),
+                            size: Size::all(Val::Px(64.0)),
                             ..default()
                         },
                         image: asset_server.load("sprites/ball_blue_large.png").into(),
@@ -75,7 +75,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                     // image
                     parent.spawn(ImageBundle {
                         style: Style {
-                            size: Size::new(Val::Px(64.0), Val::Px(64.0)),
+                            size: Size::all(Val::Px(64.0)),
                             ..default()
                         },
                         image: asset_server.load("sprites/ball_red_large.png").into(),

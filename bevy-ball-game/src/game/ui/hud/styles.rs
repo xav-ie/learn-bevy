@@ -9,7 +9,7 @@ pub const NORMAL_HUD_ITEM_STYLE: Style = Style {
     display: Display::Flex,
     justify_content: JustifyContent::Center,
     align_items: AlignItems::Center,
-    gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
+    gap: Size::all(Val::Px(8.0)),
     ..Style::DEFAULT
 };
 
