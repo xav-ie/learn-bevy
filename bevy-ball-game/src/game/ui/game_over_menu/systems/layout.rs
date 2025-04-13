@@ -1,9 +1,6 @@
 use bevy::prelude::*;
 
-use crate::game::{
-    score::resources::Score,
-    ui::game_over_menu::{components::*, styles::*},
-};
+use crate::game::ui::game_over_menu::{components::*, styles::*};
 
 pub fn spawn_game_over_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     build_game_over_menu(&mut commands, &asset_server);
@@ -70,7 +67,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                             "Final score: ",
                             TextStyle {
                                 font_size: 54.0,
-                                color: Color::CRIMSON.into(),
+                                color: Color::CRIMSON,
                                 ..normal_text_style(asset_server)
                             },
                         )],

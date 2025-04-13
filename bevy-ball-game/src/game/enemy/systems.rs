@@ -65,7 +65,7 @@ pub fn update_enemy_direction(
         }
 
         if direction_changed {
-            let sound_effects = vec![
+            let sound_effects = [
                 "audio/impactMetal_000.ogg",
                 "audio/impactMetal_001.ogg",
                 "audio/impactMetal_002.ogg",
