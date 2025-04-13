@@ -1,6 +1,7 @@
 use bevy::{app::AppExit, prelude::*};
 
 use crate::{
+    button_interaction,
     game::{
         ui::game_over_menu::{
             components::{MainMenuButton, QuitButton, RestartButton},
@@ -12,10 +13,7 @@ use crate::{
 };
 
 pub fn interact_with_restart_button(
-    mut button_query: Query<
-        (&Interaction, &mut BackgroundColor),
-        (Changed<Interaction>, With<RestartButton>),
-    >,
+    mut button_query: button_interaction!(RestartButton),
     mut simulation_state_next_state: ResMut<NextState<SimulationState>>,
     mut next_app_state: ResMut<NextState<AppState>>,
 ) {
@@ -37,10 +35,7 @@ pub fn interact_with_restart_button(
 }
 
 pub fn interact_with_main_menu_button(
-    mut button_query: Query<
-        (&Interaction, &mut BackgroundColor),
-        (Changed<Interaction>, With<MainMenuButton>),
-    >,
+    mut button_query: button_interaction!(MainMenuButton),
     mut app_state_next_state: ResMut<NextState<AppState>>,
 ) {
     if let Ok((interaction, mut background_color)) = button_query.get_single_mut() {
@@ -60,10 +55,7 @@ pub fn interact_with_main_menu_button(
 }
 
 pub fn interact_with_quit_button(
-    mut button_query: Query<
-        (&Interaction, &mut BackgroundColor),
-        (Changed<Interaction>, With<QuitButton>),
-    >,
+    mut button_query: button_interaction!(QuitButton),
     mut app_exit_event_writer: EventWriter<AppExit>,
 ) {
     if let Ok((interaction, mut background_color)) = button_query.get_single_mut() {
