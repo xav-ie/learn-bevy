@@ -2,6 +2,10 @@ use bevy::prelude::*;
 
 use super::SimulationState;
 
+pub fn clear_event<T: 'static + Send + Sync>(mut events: ResMut<Events<T>>) {
+    events.clear();
+}
+
 pub fn pause_simulation(mut next_simulation_state: ResMut<NextState<SimulationState>>) {
     next_simulation_state.set(SimulationState::Paused);
 }

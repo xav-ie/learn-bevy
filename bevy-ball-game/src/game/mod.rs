@@ -21,9 +21,12 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_state::<SimulationState>()
-            .add_event::<GameOver>()
-            .add_system(pause_simulation.in_schedule(OnEnter(AppState::Game)))
-            .add_system(resume_simulation.in_schedule(OnExit(AppState::Game)))
+            // This alternative to add_event allows the game over screen to capture the event
+            // https://bevy-cheatbook.github.io/patterns/manual-event-clear.html
+            .init_resource::<Events<GameOver>>()
+            .add_system(clear_event::<GameOver>.in_schedule(OnExit(AppState::GameOver)))
+            .add_system(pause_simulation.in_schedule(OnExit(AppState::Game)))
+            .add_system(resume_simulation.in_schedule(OnEnter(AppState::Game)))
             .add_plugin(PlayerPlugin)
             .add_plugin(StarPlugin)
             .add_plugin(EnemyPlugin)
