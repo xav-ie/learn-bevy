@@ -2,6 +2,7 @@ mod events;
 mod game;
 mod macros;
 mod main_menu;
+mod styles;
 mod systems;
 
 use game::GamePlugin;

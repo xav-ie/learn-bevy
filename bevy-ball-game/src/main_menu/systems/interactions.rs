@@ -1,11 +1,9 @@
 use bevy::{app::AppExit, prelude::*};
 
+use crate::styles::*;
 use crate::{
     button_interaction,
-    main_menu::{
-        components::{PlayButton, QuitButton},
-        styles::{ACTIVE_BUTTON_COLOR, HOVERED_BUTTON_COLOR, NORMAL_BUTTON_COLOR},
-    },
+    main_menu::components::{PlayButton, QuitButton},
     AppState,
 };
 

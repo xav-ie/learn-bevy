@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
-use crate::main_menu::{components::*, styles::*};
+use crate::main_menu::components::*;
+use crate::styles::*;
 
 pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     build_main_menu(&mut commands, &asset_server);

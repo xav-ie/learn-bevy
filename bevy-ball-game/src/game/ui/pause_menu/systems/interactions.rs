@@ -1,12 +1,10 @@
 use bevy::{app::AppExit, prelude::*};
 
+use crate::styles::*;
 use crate::{
     button_interaction,
     game::{
-        ui::pause_menu::{
-            components::{MainMenuButton, QuitButton, ResumeButton},
-            styles::{ACTIVE_BUTTON_COLOR, HOVERED_BUTTON_COLOR, NORMAL_BUTTON_COLOR},
-        },
+        ui::pause_menu::components::{MainMenuButton, QuitButton, ResumeButton},
         SimulationState,
     },
     AppState,

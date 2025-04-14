@@ -4,7 +4,6 @@ use systems::*;
 use crate::AppState;
 
 use super::SimulationState;
-// use systems::*;
 pub mod components;
 mod systems;
 

@@ -24,7 +24,6 @@ pub fn spawn_enemies(
                 texture: asset_server.load("sprites/ball_red_large.png"),
                 ..default()
             },
-            // I suppose this can be thought of as a tag
             Enemy {
                 direction: Vec2::new(random::<f32>() * 2.0 - 1.0, random::<f32>() * 2.0 - 1.0)
                     .normalize(),

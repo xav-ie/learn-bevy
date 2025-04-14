@@ -32,9 +32,6 @@ pub fn despawn_player(mut commands: Commands, player_query: Query<Entity, With<P
 /// Enable player to move with WASD/arrow keys
 pub fn player_movement(
     keyboard_input: Res<Input<KeyCode>>,
-    // The Transform here comes from the SpriteBundle above. Because we spawned
-    // the Player as a Bundle to the SpriteBundle, the Player is selectable
-    // with the Transform Component
     mut player_query: Query<&mut Transform, With<Player>>,
     time: Res<Time>,
 ) {

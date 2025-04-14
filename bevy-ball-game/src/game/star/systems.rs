@@ -22,11 +22,7 @@ pub fn spawn_stars(
                 texture: asset_server.load("sprites/star.png"),
                 ..default()
             },
-            // I suppose this can be thought of as a tag
-            Star {
-                // direction: Vec2::new(random::<f32>() * 2.0 - 1.0, random::<f32>() * 2.0 - 1.0)
-                //     .normalize(),
-            },
+            Star {},
         ));
     }
 }

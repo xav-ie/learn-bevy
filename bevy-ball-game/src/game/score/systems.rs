@@ -4,7 +4,6 @@ use bevy::prelude::*;
 
 pub fn insert_score(mut commands: Commands) {
     commands.init_resource::<Score>();
-    // commands.init_resource(Score::default());
 }
 
 pub fn remove_score(mut commands: Commands) {

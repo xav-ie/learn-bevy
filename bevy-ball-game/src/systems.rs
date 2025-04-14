@@ -1,7 +1,5 @@
 use crate::game::SimulationState;
-// use crate::components::*;
 use crate::{events::*, AppState};
-// use crate::resources::*;
 use bevy::app::AppExit;
 use bevy::{
     prelude::*,

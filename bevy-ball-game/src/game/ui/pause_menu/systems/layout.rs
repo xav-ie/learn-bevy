@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
-use crate::game::ui::pause_menu::{components::*, styles::*};
+use crate::game::ui::pause_menu::components::*;
+use crate::styles::*;
 
 pub fn spawn_pause_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     build_pause_menu(&mut commands, &asset_server);
