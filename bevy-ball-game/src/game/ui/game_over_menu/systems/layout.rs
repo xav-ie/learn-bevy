@@ -40,6 +40,37 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
             GameOverMenu {},
         ))
         .with_children(|parent| {
+            // Final score text
+            parent.spawn((
+                TextBundle {
+                    text: Text {
+                        sections: vec![TextSection::new(
+                            "Final score: ",
+                            TextStyle {
+                                font_size: 54.0,
+                                color: Color::CRIMSON,
+                                ..normal_text_style(asset_server)
+                            },
+                        )],
+                        alignment: TextAlignment::Center,
+                        ..default()
+                    },
+                    style: Style {
+                        padding: UiRect::all(Val::Px(80.0)),
+                        position: UiRect {
+                            left: Val::Auto,
+                            right: Val::Auto,
+                            top: Val::Px(80.0),
+                            bottom: Val::Auto,
+                        },
+                        position_type: PositionType::Absolute,
+                        ..default()
+                    },
+                    ..default()
+                },
+                FinalScoreText {},
+            ));
+
             // Title text
             parent.spawn(TextBundle {
                 text: Text {
@@ -59,30 +90,6 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                 },
                 ..default()
             });
-
-            // Final score text
-            parent.spawn((
-                TextBundle {
-                    text: Text {
-                        sections: vec![TextSection::new(
-                            "Final score: ",
-                            TextStyle {
-                                font_size: 54.0,
-                                color: Color::CRIMSON,
-                                ..normal_text_style(asset_server)
-                            },
-                        )],
-                        alignment: TextAlignment::Center,
-                        ..default()
-                    },
-                    style: Style {
-                        padding: UiRect::all(Val::Px(80.0)),
-                        ..default()
-                    },
-                    ..default()
-                },
-                FinalScoreText {},
-            ));
 
             // Restart button
             parent
