@@ -1,50 +1,53 @@
 {
-  config,
   lib,
   pkgs,
   ...
 }:
 
+let
+  devPkgs = with pkgs; [
+    alsa-lib
+    libxkbcommon
+    pkg-config
+    udev.dev
+    wayland.dev
+  ];
+  inherit (pkgs.stdenv) isDarwin isLinux;
+in
 {
   packages =
     with pkgs;
-    [
-      # necessary?
-      # pkg-config
-      # libGL
-      # lld
-      # clang
-      # linuxPackages.nvidia_x11
-    ]
-    ++ lib.optionals pkgs.stdenv.isLinux [
-      # required by bevy on linux
-      alsa-lib
-      libxkbcommon
-      udev
-      wayland
-    ]
-    ++ lib.optionals pkgs.stdenv.isDarwin [
+    [ ]
+    ++ lib.optionals isLinux devPkgs
+    ++ lib.optionals isDarwin [
       llvmPackages.libcxxStdenv
       llvmPackages.libcxxClang
     ];
+
   languages.rust = {
     enable = true;
-    mold.enable = pkgs.stdenv.isLinux;
+    mold.enable = isLinux;
   };
-  stdenv = pkgs.stdenvNoCC;
-  enterShell = builtins.concatStringsSep "\n" [
-    (lib.getExe config.scripts.download-assets.scriptPackage)
-    (lib.optionalString pkgs.stdenv.isLinux # sh
-      ''
-        export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${
-          with pkgs;
-          lib.makeLibraryPath [
-            vulkan-loader
-          ]
-        }"
-      ''
-    )
-  ];
+
+  # TODO: verify on darwin machine
+  stdenv = if isDarwin then pkgs.llvmPackages.stdenv else pkgs.stdenv;
+
+  env =
+    { }
+    // (lib.optionalAttrs isLinux {
+      LD_LIBRARY_PATH =
+        with pkgs;
+        lib.makeLibraryPath [
+          vulkan-loader
+        ];
+      PKG_CONFIG_PATH = lib.concatMapStringsSep ":" (pkg: "${lib.getDev pkg}/lib/pkgconfig") devPkgs;
+    });
+
+  scripts.workaround = {
+    exec = ''
+      cargo build && touch success
+    '';
+  };
 
   scripts.download-assets = {
     exec = # nu
@@ -90,7 +93,6 @@
               "interface.zip"
               [
                 "Audio/pluck_001.ogg"
-                # "Audio/pluck_002.ogg"
               ]
             ]
           ]
@@ -157,5 +159,4 @@
     binary = "nu";
     description = "Download game assets";
   };
-
 }

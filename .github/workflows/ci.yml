@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v26
+      - uses: cachix/cachix-action@v14
+        with:
+          name: devenv
+      - name: Install devenv.sh
+        run: nix profile install nixpkgs#devenv
+      - name: Build the devenv shell and run any git hooks
+        run: devenv test
+      # This is unnecesarry after https://github.com/cachix/devenv/issues/1836 is released
+      - name: Build
+        run: devenv shell workaround
+      - name: Build check
+        run: stat success
