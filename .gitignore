@@ -11,4 +11,4 @@ devenv.local.nix
 .pre-commit-config.yaml
 
 temp
-bevy-ball-game/assets
+assets

@@ -53,7 +53,7 @@
         def main [] {
           let tempDir = "temp"
           mkdir $tempDir
-          let outBase = "bevy-ball-game/assets"
+          let outBase = "assets"
           let audioFolder = $outBase | path join "audio"
           let spritesFolder = $outBase | path join "sprites"
           let fontFolder = $outBase | path join "fonts"
@@ -89,7 +89,7 @@
               "https://kenney.nl/media/pages/assets/interface-sounds/f3134a7c4c-1677589452/kenney_interface-sounds.zip"
               "interface.zip"
               [
-                # "Audio/pluck_001.ogg"
+                "Audio/pluck_001.ogg"
                 # "Audio/pluck_002.ogg"
               ]
             ]
