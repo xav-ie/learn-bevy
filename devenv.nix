@@ -29,7 +29,6 @@ in
     mold.enable = isLinux;
   };
 
-  # TODO: verify on darwin machine
   stdenv = if isDarwin then pkgs.llvmPackages.stdenv else pkgs.stdenv;
 
   env =
